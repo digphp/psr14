@@ -15,19 +15,13 @@ class Event implements EventDispatcherInterface, ListenerProviderInterface
     use ParameterDeriverTrait;
 
     private $listeners = [];
-    private $provider;
-
-    public function __construct(ListenerProviderInterface $provider)
-    {
-        $this->provider = $provider;
-    }
 
     public function dispatch(object $event)
     {
         if ($event instanceof StoppableEventInterface && $event->isPropagationStopped()) {
             return $event;
         }
-        foreach ($this->provider->getListenersForEvent($event) as $listener) {
+        foreach ($this->getListenersForEvent($event) as $listener) {
             $listener($event);
             if ($event instanceof StoppableEventInterface && $event->isPropagationStopped()) {
                 break;
